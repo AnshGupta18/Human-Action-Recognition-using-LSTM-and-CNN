@@ -12,7 +12,7 @@ import tensorflow as tf
 from collections import deque
 import matplotlib.pyplot as plt
 
-from moviepy.editor import *
+from moviepy import *
 # %matplotlib inline
 
 from sklearn.model_selection import train_test_split
