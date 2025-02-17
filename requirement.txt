@@ -1,0 +1,7 @@
+numpy
+opencv-python
+pafy
+matplotlib
+moviepy
+scikit-learn
+tensorflow
