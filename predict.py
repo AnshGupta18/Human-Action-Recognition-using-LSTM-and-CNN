@@ -4,7 +4,7 @@ import os
 import cv2
 import numpy as np
 from collections import deque
-from moviepy.editor import VideoFileClip
+from moviepy import VideoFileClip
 from tensorflow.keras.models import load_model
 
 # Set parameters and paths
