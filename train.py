@@ -41,7 +41,8 @@ if features_train is not None and features_train.size > 0:
     history_LRCN = LRCN_model.fit(features_train, labels_train, epochs=70, batch_size=4, shuffle=True, validation_split=0.2, callbacks=[early_stopping])
     loss, acc = LRCN_model.evaluate(features_test, labels_test)
     current_time = dt.datetime.strftime(dt.datetime.now(), date_time_format)
-    model_filename = f'LRCN_model_{current_time}_loss_{loss}_acc_{acc}.keras'
+    model_filename = 'LRCN_model_latest.keras'
     LRCN_model.save(model_filename)
+
 else:
     print("No training data available for LRCN model.")
