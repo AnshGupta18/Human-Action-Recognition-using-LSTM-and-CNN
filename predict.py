@@ -16,7 +16,7 @@ os.makedirs(test_videos_directory, exist_ok=True)
 video_filenames = ["video1.mp4", "video2.mp4"]
 
 # Load your saved model (update the file name as needed)
-LRCN_model = load_model("LRCN_model_2025_02_18__12_00_00_loss_0.5_acc_0.85.keras")  # change this filename
+LRCN_model = load_model("LRCN_model___Date_Time_2025_02_17__13_43_01___Loss_0.4177633225917816___Accuracy_0.8606557250022888.h5")  # change this filename
 
 def predict_on_video(video_file_path, output_file_path, sequence_length):
     video_reader = cv2.VideoCapture(video_file_path)
