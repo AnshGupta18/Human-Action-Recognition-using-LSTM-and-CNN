@@ -1,4 +1,4 @@
-# predict.py
+# data_prediction.py
 
 import os
 import cv2
