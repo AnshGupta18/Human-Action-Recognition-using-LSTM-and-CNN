@@ -1,36 +1,43 @@
 # ui.py
 
-import tkinter as tk
-from tkinter import messagebox
-import os
-from predict import predict_on_video_live  # Ensure this function is defined in predict.py
+import cv2
+import numpy as np
+from collections import deque
+from data_prediction import Prediction
 
-# Constants
-SEQUENCE_LENGTH = 20
-# Define paths to your video files. Adjust these if your videos are stored elsewhere.
-video1_path = os.path.join("test_videos", "video1.mp4")
-video2_path = os.path.join("test_videos", "video2.mp4")
+class ActionRecognitionUI:
+    def __init__(self):
+        self.model_path = "saved_models/LRCN_best.keras"
+        self.predictor = Prediction(self.model_path)
+        self.sequence_length = self.predictor.sequence_length
+        self.frames_queue = deque(maxlen=self.sequence_length)
+        self.classes_list = self.predictor.classes_list
 
-def run_video_prediction(video_path):
-    if not os.path.exists(video_path) or os.path.getsize(video_path) == 0:
-        messagebox.showerror("Error", f"Video file not found or empty:\n{video_path}")
-        return
-    # You can print to the console or update the UI if needed.
-    print(f"Starting prediction on: {video_path}")
-    predict_on_video_live(video_path, SEQUENCE_LENGTH)
+    def start_real_time_prediction(self):
+        cap = cv2.VideoCapture(0)  # Use webcam
 
-# Create the main GUI window
-root = tk.Tk()
-root.title("Video Action Recognition")
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                break
 
-# Create buttons for each video
-btn_video1 = tk.Button(root, text="Run Prediction on Video 1", 
-                       command=lambda: run_video_prediction(video1_path))
-btn_video1.pack(pady=10)
+            resized_frame = cv2.resize(frame, (64, 64)) / 255.0
+            self.frames_queue.append(resized_frame)
 
-btn_video2 = tk.Button(root, text="Run Prediction on Video 2", 
-                       command=lambda: run_video_prediction(video2_path))
-btn_video2.pack(pady=10)
+            predicted_class_name = "Waiting..."
+            if len(self.frames_queue) == self.sequence_length:
+                predicted_probs = self.predictor.model.predict(np.expand_dims(self.frames_queue, axis=0))[0]
+                predicted_class_name = self.classes_list[np.argmax(predicted_probs)]
 
-# Start the Tkinter event loop
-root.mainloop()
+            cv2.putText(frame, f"Action: {predicted_class_name}", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            cv2.imshow("Real-Time Action Recognition", frame)
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+        cap.release()
+        cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    ui = ActionRecognitionUI()
+    ui.start_real_time_prediction()
